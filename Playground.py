@@ -17,6 +17,17 @@ class TenPercentPromotion(Promotion):
         if totalPrice > 50:
             return totalPrice * 0.90
         return totalPrice
+    
+class HundredMInusTwnetyPromotion(Promotion):
+    def getFinalPrice(self, totalPrice):
+        if totalPrice > 100:
+            return totalPrice - 20
+        return totalPrice
+    
+class Payment:
+    def handlePromotiuon(self, promotion: Promotion, totalPrice: float) -> float:
+        return promotion.getFinalPrice(totalPrice)
+    
 
 class Pizza(ABC):
     def __init__(self, name: str, size: str, price: float):
@@ -49,6 +60,16 @@ class BasicPizza(Pizza):
     def getLargeSizePrice(self, size, promotion: Promotion) -> float:
         return promotion.getFinalPrice(20.0)
     
+class PepperoniPizza(Pizza):
+    def getSmallSizePrice(self, size, promotion: Promotion) -> float:
+        return promotion.getFinalPrice(12.0)
+
+    def getMediumSizePrice(self, size, promotion: Promotion) -> float:
+        return promotion.getFinalPrice(17.0)
+
+    def getLargeSizePrice(self, size, promotion: Promotion) -> float:
+        return promotion.getFinalPrice(22.0)
+    
 class PizzaDecorator(Pizza):
     def __init__(self, pizza: Pizza):
         self._pizza = pizza
@@ -76,6 +97,19 @@ class ExtraCheeseDecorator(PizzaDecorator):
     def getLargeSizePrice(self, size, promotion: Promotion) -> float:
         return super().getLargeSizePrice(size, promotion) + 4.0
 
+class ExtraVeggiesDecorator(PizzaDecorator):
+    def __init__(self, pizza: Pizza):
+        super().__init__(pizza)
+        self.name = f"{pizza.name} with Extra Veggies"
+
+    def getSmallSizePrice(self, size, promotion: Promotion) -> float:
+        return super().getSmallSizePrice(size, promotion) + 1.5
+
+    def getMediumSizePrice(self, size, promotion: Promotion) -> float:
+        return super().getMediumSizePrice(size, promotion) + 2.5
+
+    def getLargeSizePrice(self, size, promotion: Promotion) -> float:
+        return super().getLargeSizePrice(size, promotion) + 3.5
 
 def main():
     promotion = EightPercentPromotion()
@@ -86,6 +120,7 @@ def main():
 
     basic_pizza = ExtraCheeseDecorator(basic_pizza)
     basic_pizza = ExtraCheeseDecorator(basic_pizza)
+    basice_pizza = ExtraVeggiesDecorator(basic_pizza)
     print(basic_pizza)
     print(f"Small Size Price: ${basic_pizza.getSmallSizePrice('small', promotion):.2f}")
     print(f"Medium Size Price: ${basic_pizza.getMediumSizePrice('medium', promotion):.2f}")
