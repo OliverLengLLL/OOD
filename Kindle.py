@@ -183,10 +183,9 @@ class Kindle:
         if not book:
             print("Book not found in your library")
             return None
-        
         try:
             reader = self.reader_factory.create_reader(book.format)
-            content = reader.get_supported_format()
+            content = reader.read(book)
             print(content)
             return content
         except ValueError as e:
